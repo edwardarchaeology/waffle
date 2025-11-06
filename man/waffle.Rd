@@ -97,10 +97,9 @@ exporting to another program for use/display.
 If you specify a string (vs \code{FALSE}) to \code{use_glyph} the function
 will map the input to a Font Awesome glyph name and use that glyph for the
 tile instead of a block (making it more like an isotype pictogram than a
-waffle chart). You'll need to install Font Awesome 5 and use
-the \code{extrafont} package to
-be able to use Font Awesome 5 glyphs. Sizing is also up to the user since
-fonts do not automatically scale with graphic resize.
+waffle chart). You'll need to install Font Awesome 5 and the fonts will be
+registered automatically using the \code{systemfonts} package. Sizing is also up
+to the user since fonts do not automatically scale with graphic resize.
 
 Glyph idea inspired by Ruben C. Arslan (@_r_c_a)
 }
@@ -119,7 +118,6 @@ parts <- data.frame(
 
 waffle(parts, rows=8)
 
-# library(extrafont)
 # waffle(parts, rows=8, use_glyph="shield")
 
 parts <- c(One=80, Two=30, Three=20, Four=10)

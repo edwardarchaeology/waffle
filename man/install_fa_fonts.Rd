@@ -7,5 +7,19 @@
 install_fa_fonts()
 }
 \description{
-Install Font Awesome 5 Fonts
+Font Awesome 5 fonts are bundled with the waffle package and will be
+automatically registered with R using the systemfonts package when you use
+glyphs in waffle charts.
+
+However, on some systems (especially Windows), graphics devices may not
+recognize programmatically registered fonts. For best results, you should
+install the fonts system-wide by:
+\enumerate{
+\item Navigate to the font directory shown by this function
+\item Right-click each .ttf file and select "Install" or "Install for all users"
+\item Restart R/RStudio after installation
+}
+
+If you need to use these fonts outside of waffle charts, the TTF font files
+are located in the package installation directory.
 }

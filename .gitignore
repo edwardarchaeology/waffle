@@ -6,3 +6,9 @@ src/*.o
 src/*.so
 src/*.dll
 inst/doc
+
+# Test files
+test_systemfonts.R
+TESTING.R
+visual_tests.R
+install_fonts_windows.R

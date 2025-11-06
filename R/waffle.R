@@ -23,10 +23,9 @@
 #' If you specify a string (vs `FALSE`) to `use_glyph` the function
 #' will map the input to a Font Awesome glyph name and use that glyph for the
 #' tile instead of a block (making it more like an isotype pictogram than a
-#' waffle chart). You'll need to install Font Awesome 5 and use
-#' the `extrafont` package to
-#' be able to use Font Awesome 5 glyphs. Sizing is also up to the user since
-#' fonts do not automatically scale with graphic resize.
+#' waffle chart). You'll need to install Font Awesome 5 and the fonts will be
+#' registered automatically using the `systemfonts` package. Sizing is also up
+#' to the user since fonts do not automatically scale with graphic resize.
 #'
 #' Glyph idea inspired by Ruben C. Arslan (@@_r_c_a)
 #'
@@ -69,29 +68,27 @@
 #' @export
 #' @examples
 #' parts <- c(80, 30, 20, 10)
-#' waffle(parts, rows=8)
+#' waffle(parts, rows = 8)
 #'
 #' parts <- data.frame(
 #'   names = LETTERS[1:4],
 #'   vals = c(80, 30, 20, 10)
 #' )
 #'
-#' waffle(parts, rows=8)
+#' waffle(parts, rows = 8)
 #'
-#' # library(extrafont)
 #' # waffle(parts, rows=8, use_glyph="shield")
 #'
-#' parts <- c(One=80, Two=30, Three=20, Four=10)
-#' chart <- waffle(parts, rows=8)
+#' parts <- c(One = 80, Two = 30, Three = 20, Four = 10)
+#' chart <- waffle(parts, rows = 8)
 #' # print(chart)
-waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
-                   size=2, flip=FALSE, reverse=FALSE, equal=TRUE, pad=0,
+waffle <- function(parts, rows = 10, keep = TRUE, xlab = NULL, title = NULL, colors = NA,
+                   size = 2, flip = FALSE, reverse = FALSE, equal = TRUE, pad = 0,
                    use_glyph = FALSE,
                    glyph_size = 12,
                    glyph_font = "Font Awesome 5 Free Solid",
                    glyph_font_family = "FontAwesome5Free-Solid",
                    legend_pos = "right") {
-
   if (inherits(parts, "data.frame")) {
     stats::setNames(
       unlist(parts[, 2], use.names = FALSE),
@@ -124,28 +121,26 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
   dat$value <- c(parts_vec, rep(NA, nrow(dat) - length(parts_vec)))
 
   if (!inherits(use_glyph, "logical")) {
-
     if (length(use_glyph) == 1L) {
-
       if (grepl("wesom", glyph_font)) {
         fontlab <- .fa_unicode[.fa_unicode[["name"]] == use_glyph, "unicode"]
         dat$fontlab <- c(
           rep(fontlab, length(parts_vec)),
-          rep("", nrow(dat) - length(parts_vec)
-          # rep(NA, nrow(dat) - length(parts_vec)
+          rep(
+            "", nrow(dat) - length(parts_vec)
+            # rep(NA, nrow(dat) - length(parts_vec)
           )
         )
       } else {
         dat$fontlab <- c(
           rep(use_glyph, length(parts_vec)),
-          rep("", nrow(dat) - length(parts_vec)
-          # rep(NA, nrow(dat) - length(parts_vec)
+          rep(
+            "", nrow(dat) - length(parts_vec)
+            # rep(NA, nrow(dat) - length(parts_vec)
           )
         )
       }
-
     } else if (length(use_glyph) == length(parts)) {
-
       if (grepl("wesom", glyph_font)) {
         fontlab <- .fa_unicode[.fa_unicode[["name"]] %in% use_glyph, "unicode"]
         # fontlab <- .fa_unicode[use_glyph]
@@ -161,16 +156,13 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
           rep("", nrow(dat) - length(parts_vec))
         )
       }
-
     } else if (length(use_glyph) == length(parts_vec)) {
-
       if (grepl("wesom", glyph_font)) {
         fontlab <- .fa_unicode[.fa_unicode[["name"]] %in% use_glyph, "unicode"]
         dat$fontlab <- c(fontlab, rep(NA, nrow(dat) - length(parts_vec)))
       } else {
         dat$fontlab <- c(use_glyph, rep(NA, nrow(dat) - length(parts_vec)))
       }
-
     } else {
       stop("'use_glyph' must have length 1, length(parts), or sum(parts)")
     }
@@ -192,8 +184,7 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
   # make the plot
 
   if (inherits(use_glyph, "logical")) {
-
-    gg <- gg + geom_tile(aes(fill = value), color = "white", size = size)
+    gg <- gg + geom_tile(aes(fill = value), color = "white", linewidth = size)
 
     gg <- gg + scale_fill_manual(
       name = "",
@@ -205,18 +196,20 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
 
     gg <- gg + guides(fill = guide_legend(override.aes = list(colour = "#00000000")))
 
-    gg <- gg + theme(legend.background =
-                       element_rect(fill = "#00000000", color = "#00000000"))
+    gg <- gg + theme(
+      legend.background =
+        element_rect(fill = "#00000000", color = "#00000000")
+    )
 
-    gg <- gg + theme(legend.key =
-                       element_rect(fill = "#00000000", color = "#00000000"))
-
+    gg <- gg + theme(
+      legend.key =
+        element_rect(fill = "#00000000", color = "#00000000")
+    )
   } else {
-
-    if (extrafont::choose_font(glyph_font, quiet = TRUE) == "") {
+    if (!.has_font(glyph_font)) {
       stop(
         sprintf(
-          "Font [%s] not found. Please install it and use extrafont to make it available to R",
+          "Font [%s] not found. Please install it or use install_fa_fonts() for Font Awesome fonts",
           glyph_font
         ),
         call. = FALSE
@@ -225,13 +218,23 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
 
     load_fontawesome()
 
+    # Warn about potential font rendering issues on certain devices
+    if (.Platform$OS.type == "windows") {
+      message(
+        "Note: Font Awesome glyphs may not render correctly on all graphics devices.\n",
+        "  For best results, use: dev.new(type='windows') or install fonts system-wide.\n",
+        "  Run install_fa_fonts() for font file locations."
+      )
+    }
+
     gg <- gg + geom_tile(
-      color = "#00000000", fill = "#00000000", size = size,
+      color = "#00000000", fill = "#00000000", linewidth = size,
       alpha = 0, show.legend = FALSE
     )
 
     gg <- gg + geom_point(
-      aes(color = value), fill = "#00000000", size = 0,
+      aes(color = value),
+      fill = "#00000000", size = 0,
       show.legend = TRUE
     )
 
@@ -249,11 +252,15 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
       drop = !keep
     )
 
-    gg <- gg + guides(color =
-                        guide_legend(override.aes = list(shape = 15, size = 7)))
+    gg <- gg + guides(
+      color =
+        guide_legend(override.aes = list(shape = 15, size = 7))
+    )
 
-    gg <- gg + theme(legend.background =
-                       element_rect(fill = "#00000000", color = "#00000000"))
+    gg <- gg + theme(
+      legend.background =
+        element_rect(fill = "#00000000", color = "#00000000")
+    )
 
     gg <- gg + theme(legend.key = element_rect(color = "#00000000"))
   }
@@ -283,5 +290,4 @@ waffle <- function(parts, rows=10, keep=TRUE, xlab=NULL, title=NULL, colors=NA,
   gg <- gg + theme(legend.position = legend_pos)
 
   gg
-
 }

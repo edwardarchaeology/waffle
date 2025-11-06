@@ -23,7 +23,7 @@
 #' @importFrom ggplot2 discrete_scale alpha
 #' @importFrom grid arrow unit grid.newpage grid.draw unit.c unit.pmax unit.pmin
 #' @importFrom grid textGrob gpar grobTree roundrectGrob
-#' @importFrom extrafont ttf_import font_import choose_font
+#' @importFrom systemfonts match_fonts register_font
 #' @importFrom stats setNames
 #' @importFrom utils tail
 #' @importFrom rlang is_missing
